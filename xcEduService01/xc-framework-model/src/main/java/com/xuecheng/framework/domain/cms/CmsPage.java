@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Data
 @ToString
-@Document(collection = "cms_page")
+@Document(collection = "cms_page")  //对应mongo数据库中的哪个集合
 public class CmsPage {
     /**
      * 页面名称、别名、访问地址、类型（静态/动态）、页面模版、状态

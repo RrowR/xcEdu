@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -39,6 +37,29 @@ public class CmsPageRespositoryTest {
         Pageable pageable = PageRequest.of(page,size);
         Page<CmsPage> all = cmsPageRepository.findAll(pageable);
         System.out.println(all);
+    }
+
+    @Test
+    //自定义分页条件查询
+    public void TestPageSearchByExample(){
+        int page = 0;
+        int size = 5;
+        //定义分页条件
+        Pageable pageable = PageRequest.of(page,size);
+        CmsPage cmsPage = new CmsPage();
+//        cmsPage.setSiteId("first");
+        cmsPage.setPageAliase("分类");
+        //定义查询条件，这里还没有设置任何查询条件
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching();
+        //设置查询条件，这里的条件是包含pageAliase的条件，只要这个对象包含了pageAliase，就将这个对象里的这个值在数据库里查出来,注意：这里是精确查询，也支持多条件查询
+//        exampleMatcher.withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
+        //这里存在逻辑问题，如果不把新的条件赋值给exampleMatcher，那么下面传入参数的时候，是传的上面的空条件
+        exampleMatcher = exampleMatcher.withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.startsWith());      //以什么为开始，其实还有很多其他方法
+        //定义条件查询，将条件值对象和查询条件传入到Example中
+        Example<CmsPage> example = Example.of(cmsPage,exampleMatcher);
+
+        Page<CmsPage> all = cmsPageRepository.findAll(example, pageable);
+        all.forEach(System.out::println);
     }
 
     @Test
@@ -90,7 +111,6 @@ public class CmsPageRespositoryTest {
             cmsPageRepository.save(cmsPage);
         }
     }
-
 
 
 }
