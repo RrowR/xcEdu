@@ -2,6 +2,7 @@ package com.xuecheng.manage_cms.dao;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.CmsPageParam;
+import com.xuecheng.manage_cms.service.PageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,16 @@ public class CmsPageRespositoryTest {
 
     @Autowired
     CmsPageRepository cmsPageRepository;
+
+    @Autowired
+    PageService pageService;
+
+    @Test
+    //测试根据id进行查询
+    public void testFindById(){
+        CmsPage result = pageService.findById("5a795ac7dd573c04508f3a56");
+        System.out.println(result);
+    }
 
     @Test
     //查询所有

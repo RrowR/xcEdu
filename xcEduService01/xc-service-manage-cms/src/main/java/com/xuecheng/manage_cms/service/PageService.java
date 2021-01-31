@@ -2,9 +2,11 @@ package com.xuecheng.manage_cms.service;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
+import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
+import com.xuecheng.framework.model.response.ResultCode;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PageService {
@@ -73,4 +76,51 @@ public class PageService {
         QueryResponseResult queryResponseResult = new QueryResponseResult(CommonCode.SUCCESS,queryResult);
         return queryResponseResult;
     }
+
+    //新增页面
+    public CmsPageResult add(CmsPage cmsPage){
+        //检验页面名称、站点Id、页面webPath唯一性
+        //根据页面名称、站点Id、页面webpath去cms_page集合，如果查到就说明此页面存在，如果查不到就继续添加
+        CmsPage cmsPage1 = cmsPageRepository.findBySiteIdAndPageWebPathAndPageName(cmsPage.getSiteId(), cmsPage.getPageWebPath(), cmsPage.getPageName());
+        if(cmsPage1 == null){
+            //调用dao添加新增页面
+            cmsPage.setPageId(null);
+            CmsPage save = cmsPageRepository.save(cmsPage);
+            return new CmsPageResult(CommonCode.SUCCESS,save);
+        }
+        return new CmsPageResult(CommonCode.FAIL,null);
+    }
+
+    //通过id进行查询
+    public CmsPage findById(String id){
+        Optional<CmsPage> option1 = cmsPageRepository.findById(id);
+        if(option1.isPresent()){
+            CmsPage cmsPage = option1.get();
+            return cmsPage;
+        }
+        return null;
+    }
+
+    //这里是页面修改的方法，需要传入需要修改的页面id和整个页面信息，通过id查询出这个页面之后，把这个页面的信息通过set方法设入进新的值，这个值就是后面带的Cmspage页面里面的内容通过get获得
+    public CmsPageResult update(String id,CmsPage cmsPage){
+        //因为这个方法就在这个类里面，所以可以调用this
+        CmsPage cmsPage1 = this.findById(id);
+        if(cmsPage1 != null){
+            //设置页面的一系列属性
+            cmsPage1.setTemplateId(cmsPage.getTemplateId());
+            cmsPage1.setSiteId(cmsPage.getSiteId());
+            cmsPage1.setPageAliase(cmsPage.getPageAliase());
+            cmsPage1.setPageName(cmsPage.getPageName());
+            cmsPage1.setPageWebPath(cmsPage.getPageWebPath());
+            cmsPage1.setPagePhysicalPath(cmsPage.getPagePhysicalPath());
+            //一定要记住，设置好的属性需要重新保存到数据库中去,否则数据库的内容并没有被更新
+            CmsPage save = cmsPageRepository.save(cmsPage1);
+            if(save != null){
+                CmsPageResult cmsPageResult = new CmsPageResult(CommonCode.SUCCESS,save);
+                return cmsPageResult;
+            }
+        }
+        return new CmsPageResult(CommonCode.FAIL,null);
+    }
+
 }

@@ -3,15 +3,13 @@ package com.xuecheng.manage_cms.controller;
 import com.xuecheng.api.cms.CmsPageControllerApi;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
+import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.manage_cms.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,5 +37,24 @@ public class CmsPageController implements CmsPageControllerApi {
         return result;*/
 
         return pageService.findList(page,size,queryPageRequest);
+    }
+
+    @Override
+    @PostMapping("/add")
+    public CmsPageResult add(@RequestBody CmsPage cmsPage) {
+        return pageService.add(cmsPage);
+    }
+
+    @Override
+    @GetMapping("/get/{id}")
+    public CmsPage findById(@PathVariable("id") String id) {
+        return pageService.findById(id);
+    }
+
+    @Override
+    @PutMapping("/edit/{id}")//这里使用put方法，http 方法中put表示更新
+    //这里的CmsPage是添加了@RequestBody了的，作用就是将前端传过来的数据变成json数据，但是添加了在swagger文档中并不直观，其实还不太好看，我个人建议是不添加这个注解，既然添加了就让他添加吧
+    public CmsPageResult edit(@PathVariable("id") String id,@RequestBody CmsPage cmsPage) {
+        return pageService.update(id,cmsPage);
     }
 }
