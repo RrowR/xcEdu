@@ -7,6 +7,7 @@ import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
+import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,5 +57,11 @@ public class CmsPageController implements CmsPageControllerApi {
     //这里的CmsPage是添加了@RequestBody了的，作用就是将前端传过来的数据变成json数据，但是添加了在swagger文档中并不直观，其实还不太好看，我个人建议是不添加这个注解，既然添加了就让他添加吧
     public CmsPageResult edit(@PathVariable("id") String id,@RequestBody CmsPage cmsPage) {
         return pageService.update(id,cmsPage);
+    }
+
+    @Override
+    @DeleteMapping("/delete/{id}")
+    public ResponseResult delete(@PathVariable String id) {
+        return pageService.delete(id);
     }
 }
