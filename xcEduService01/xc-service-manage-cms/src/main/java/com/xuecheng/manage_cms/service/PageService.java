@@ -3,6 +3,8 @@ package com.xuecheng.manage_cms.service;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.exception.CustomerException;
+import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.*;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +81,14 @@ public class PageService {
         //检验页面名称、站点Id、页面webPath唯一性
         //根据页面名称、站点Id、页面webpath去cms_page集合，如果查到就说明此页面存在，如果查不到就继续添加
         CmsPage cmsPage1 = cmsPageRepository.findBySiteIdAndPageWebPathAndPageName(cmsPage.getSiteId(), cmsPage.getPageWebPath(), cmsPage.getPageName());
+
+        //页面不存在
+        if(cmsPage1 != null){
+            //页面已经存在
+            //抛出异常，异常内容就是页面已经存在
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+
         if(cmsPage1 == null){
             //调用dao添加新增页面
             cmsPage.setPageId(null);
