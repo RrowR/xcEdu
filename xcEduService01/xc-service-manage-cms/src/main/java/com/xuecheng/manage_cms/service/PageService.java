@@ -2,6 +2,7 @@ package com.xuecheng.manage_cms.service;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
+import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.exception.CustomerException;
 import com.xuecheng.framework.exception.ExceptionCast;
@@ -82,11 +83,11 @@ public class PageService {
         //根据页面名称、站点Id、页面webpath去cms_page集合，如果查到就说明此页面存在，如果查不到就继续添加
         CmsPage cmsPage1 = cmsPageRepository.findBySiteIdAndPageWebPathAndPageName(cmsPage.getSiteId(), cmsPage.getPageWebPath(), cmsPage.getPageName());
 
-        //页面不存在
+        //页面存在
         if(cmsPage1 != null){
             //页面已经存在
             //抛出异常，异常内容就是页面已经存在
-            ExceptionCast.cast(CommonCode.FAIL);
+            ExceptionCast.cast(CmsCode.CMS_ADDPAGE_EXISTSNAME);
         }
 
         if(cmsPage1 == null){
